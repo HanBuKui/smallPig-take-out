@@ -52,6 +52,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
                 .select()
+                // 指定生成接口需要扫描的包
                 .apis(RequestHandlerSelectors.basePackage("com.sky.controller"))
                 .paths(PathSelectors.any())
                 .build();
@@ -59,8 +60,9 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     }
 
     /**
-     * 设置静态资源映射
+     * 设置静态资源映射 for knife4j   主要是访问生成的接口文档(html,js,css)
      * @param registry
+     * 正常访问的话请求是统一被springmvc的DispatcherHandler进一步分配，如果不配置的话会找不到请求路径对应的handler(默认的servlet也访问不到),从而404
      */
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
