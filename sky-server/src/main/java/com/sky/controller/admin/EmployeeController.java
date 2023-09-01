@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
@@ -8,15 +9,19 @@ import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
 import com.sky.vo.EmployeeLoginVO;
+import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,4 +81,21 @@ public class EmployeeController {
         return Result.success();
     }
 
+    
+    /**
+    *@Description: 
+    *@Param: 
+    *@return: 
+    */
+    @PostMapping
+    @ApiOperation("新增员工")
+    public Result<String> save(@RequestBody EmployeeDTO employeeDTO, HttpServletRequest request){
+        log.info("新增员工：{}",employeeDTO);
+        Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), request.getHeader("token"));
+        String operId = claims.get(JwtClaimsConstant.EMP_ID).toString();
+        log.info("操作人:{}",operId);
+        employeeService.save(employeeDTO);
+        return Result.success();
+
+    }
 }
